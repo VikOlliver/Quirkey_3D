@@ -1,6 +1,5 @@
 // quirkeyv3.scad - Quirkey version with captive keycaps and simplified wiring.
 // Todo:
-// Slight taper on forward edge of keys to avoid binding.
 
 include <quirkey.inc>
 // Logo takes a while to compile. If developing set this to disable it, otherwise use 1.
