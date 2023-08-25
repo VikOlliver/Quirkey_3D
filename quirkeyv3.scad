@@ -1,4 +1,5 @@
 // quirkeyv3.scad - Quirkey version with captive keycaps and simplified wiring.
+// Released under the GPL 3.0 or later by vik@diamondage.co.nz
 // Todo:
 
 include <quirkey.inc>
@@ -30,7 +31,7 @@ doubleswitchSpacing=doublekeyWidth-2*microswitch_wid;
 doubleswitchPivotShift=1;
 
 // Dimensions of a key pillar supports with key cavity therein
-pillarWall=1.5;
+pillarWall=1.8;
 pillarWid=keycapWidth+2*pillarWall;
 pillarLen=microswitch_len+2*pillarWall;
 doublepillarLen=microswitch_len+4*pillarWall;
@@ -398,7 +399,7 @@ module switch_pillar(ht) translate([0,0,-ht]) {
                 cube([pillarWid*3,switchPillarShave*3,switchPillarShave*3],center=true);
         }
         // Wiring slot
-        translate([0,-pillarLen/2,ht*2-15]) cube([3,pillarLen,ht*2],center=true);
+        translate([0,-pillarLen/2,ht*2-17]) cube([3.5,pillarLen,ht*2],center=true);
         // Switch cavity in the top
         translate([0,0,ht]) switch_socket();
         // Slot for pivot
@@ -430,7 +431,7 @@ module doubleswitch_pillar(ht) translate([0,0,-ht]) {
         translate([doublepillarWid/2,0,ht]) rotate([0,45,0]) cube([dsTrim,doublepillarLen*2,dsTrim],center=true);
         translate([-doublepillarWid/2,0,ht]) rotate([0,45,0]) cube([dsTrim,doublepillarLen*2,dsTrim],center=true);
         // Wiring slot
-        translate([microswitch_len/2-0.01,0,ht*2-15]) cube([doublepillarWid,3,ht*2],center=true);
+        translate([microswitch_len/2-0.01,0,ht*2-17]) cube([doublepillarWid,3.5,ht*2],center=true);
         // Switch cavity in the top
         translate([0,0,ht]) doubleswitch_socket();
          // Gaps allowing for extraction of a switch with pilers
@@ -531,10 +532,10 @@ module base() intersection() {
 //translate([0,30,0]) rotate([0,0,90])
 //keycap();
 //translate([0,0,18]) doubleswitch_pillar(18);
-translate ([0,30,0]) double_key();
+//translate ([0,30,0]) double_key();
 //translate([-35,0,0]) thumbkey();
 //translate([30,0,0]) commandkey();
 
-//base();
+base();
 //translate([0,0,base_ht]) 
-//  hollow_top_shell();s
+//  hollow_top_shell();
