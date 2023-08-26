@@ -10,8 +10,6 @@ On a Quirkey, fingers never move from their assigned keys, and press simultaneou
 ## Revision Notes
 This revision features captive keys that do not require glueing on like the earlier versions. The base now has pillars that hold the microswitches and keycaps, with slots added so that the entire wiring harness can be installed and removed without having to solder or unsolder any wires. The shell is now hollow, with manually-added support panels so that the whole thing prints without any support material (at least on a Prusa Mk3). The thumb and control key have been combined into one component.
 
-Note: This is still work-in-progress. It fits together and works but is not yet optimised.
-
 ## Build Process
 
 OpenSCAD Preferences/Advanced may need to be changed to allow 20,000 elements as these models get quite complicated.
@@ -28,9 +26,9 @@ At the bottom of the quirkeyv3.scad file are a number of modules that may be pri
 
 Once these function, build base() and hollow_top_shell(). Four keycap() are also needed; note that software documentation suggests a colour scheme that is used by the user documentation and typing tutor.
 
-You will also need EITHER a double_key() is you are following your own colour scheme, OR a thumbkey() and commandkey(). The latter should press-fit, but in practice a drop of superglue is advisable.
+You will also need EITHER a double_key() is you are following your own colour scheme, OR a thumbkey() and commandkey(). The latter should press-fit, but in practice a drop of superglue is advisable. The thumbkey() is best printed without a brim due to the shallow groove under it.
 
-I will write an assembly manual in the fullness of time.
+An assembly document is in there with the rest of the files.
 
 ## Acknowledgements
 This work is based largely on the efforts of Cy Endfield and his partner Chris Rainey's Microwriter Ltd. in the UK during the 80's. Their concept was brilliant, and many people still use their Microwriter and Quinkey devices. Time has passed, patents have lapsed, and the electronics have become more affordable, thanks to the likes of Arduino and the Raspberry Pi Foundation. Credit is also due to my colleages Dr. Adrian Bowyer, Dr. Ed Sells et al for creating the RepRap and thus making 3D printing itself affordable and accessible for so many people.
