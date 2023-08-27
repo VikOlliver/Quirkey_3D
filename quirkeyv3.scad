@@ -5,6 +5,8 @@
 include <quirkey.inc>
 // Logo takes a while to compile. If developing set this to disable it, otherwise use 1.
 uselogo=1;
+// Flip model for left handers. Complicated by reset hole location and logos...
+left_hand=1;                    // 1 for right-handed, -1 for lefties
 
 // Length of the microswitch body
 microswitch_len=13.2 ;
@@ -49,6 +51,7 @@ boardHoleY=11.4;
 boardHoleRad=2.0/2; // Includes interference fit.
 boardComponentHt=5; // Board mounted upside down, so clearance needed.
 boardPillarHt=8;        // Distance from base to top of support pillar
+// Location of the reset button relative to the board.
 boardResetHoleY=6.9;
 boardResetHoleX=12.25;
 boardPlacement=[boardLen/2+shellThickness+10,first_finger_loc[1]-3-boardLen/2,base_ht];
@@ -230,7 +233,7 @@ module double_key() {
  }
 
 // Double key with the command hey cut out and pin hole in it.
- module thumbkey() {
+ module thumbkey() scale([left_hand,1,1]) {
      difference() {
         double_key();
          // Lop off the command key
@@ -241,7 +244,7 @@ module double_key() {
 }
 
 // Command key half of thumb key with a pinhole in its arse.
-module commandkey() translate([0,0,-doublekeyHeight/2]) {
+module commandkey() scale([left_hand,1,1]) translate([0,0,-doublekeyHeight/2]) {
      difference() {
          intersection() {
             double_key();
@@ -308,7 +311,7 @@ module reduced_core_form(reduce) {
 }
 
 // Hollow top shell minus the base.
-module hollow_top_shell() translate([0,0,-base_ht])  difference() {
+module hollow_top_shell() scale([left_hand,1,1]) translate([0,0,-base_ht])  difference() {
     union() {
         difference() {
             body_construction();
@@ -317,7 +320,7 @@ module hollow_top_shell() translate([0,0,-base_ht])  difference() {
             translate([0,0,base_ht-overall_length]) cube(overall_length*2,center=true);
             // Fancy schmanzy logo
             if (uselogo==1)
-                translate([overall_width/2,overall_length/2,overall_height*0.815-0.75]) rotate([-wrist_tilt,0,0]) scale(4) linear_extrude(height=10) import("quirkey_logo.svg");
+                translate([overall_width/2,overall_length/2,overall_height*0.815-0.75]) rotate([-wrist_tilt,0,0]) scale([4*left_hand,4,4]) linear_extrude(height=10) import("quirkey_logo.svg");
         }
         translate([0,0,base_ht]) screw_pillars();
         // Some slices for bridging support
@@ -441,7 +444,7 @@ module doubleswitch_pillar(ht) translate([0,0,-ht]) {
             translate([0,doublepillarLen/2,ht-pillarInset/2-pillarPivotRad/2]) cube([pillarPivotRad*2,doublepillarLen,pillarInset],center=true);
             translate([0,doublepillarLen/2,ht-pillarPivotRad*.9]) rotate([90,0,0]) cylinder(r=pillarPivotRad,h=doublepillarLen,center=true,$fn=22);
             // Slightly higher, narrower slot for pivot at back, with captive top
-            translate([0,-doublepillarLen/2,ht+pillarInset-1.3])
+            translate([0,-doublepillarLen/2,ht+pillarInset-1.4])
             cube([pillarPivotRad*1.9,doublepillarLen,(pillarInset)*2],center=true);
             translate([0,-doublepillarLen/2,ht-pillarInset+pillarPivotRad+1.5]) rotate([90,0,0]) cylinder(r=pillarPivotRad*0.95,h=doublepillarLen,center=true,$fn=22);
         }
@@ -477,7 +480,7 @@ module pillar_collection() {
     }
 }
 
-module base() intersection() {
+module base() scale([left_hand,1,1]) intersection() {
     union() {
         difference() {
             union() {
@@ -495,12 +498,14 @@ module base() intersection() {
             translate([0,0,-overall_length]) cube(overall_length*2,center=true);
             // Nice logo
             if (uselogo==1)
-                translate([overall_width/2,30,0.5]) scale([2,2,1]) rotate([0,180,0]) linear_extrude(height=11) import("Open-source-hardware-logo.svg");
+                translate([overall_width/2,30,0.5]) scale([2*left_hand,2,1]) rotate([0,180,0]) linear_extrude(height=11) import("Open-source-hardware-logo.svg");
             // Add screw holes
             screw_holes();
             // Add a "Pi hole" Allow an extra 20 (40/2)for the USB plug
             translate([0,0,6]) translate(boardPlacement) cube([boardLen+40,boardWid+8,12],center=true);
-            translate([boardLen/2-boardResetHoleX,boardResetHoleY-boardWid/2,0])
+            // A hole right under the reset button. Flip this for the left-hand version as board
+            // is rotated through 180 degrees to point at the other side of the keyboard shell.
+            translate([boardLen/2-boardResetHoleX,left_hand*(boardResetHoleY-boardWid/2),0])
                 translate(boardPlacement) cylinder(h=50,r=2.1,center=true,$fn=20);
             // Tunnel and inside part of strain relief hole for cable
             translate([overall_width+0.01,cableHoleShift,base_ht+6])
@@ -536,6 +541,6 @@ module base() intersection() {
 //translate([-35,0,0]) thumbkey();
 //translate([30,0,0]) commandkey();
 
-base();
+//base();
 //translate([0,0,base_ht]) 
-//  hollow_top_shell();
+ hollow_top_shell();
