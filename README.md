@@ -22,6 +22,8 @@ Having set this, build the core.scad file and save as core.stl in the same direc
 
 In the quirkeyv3.scad file are a series of microswitch_* variables. Use these to configure the dimensions of the smallest lever microswitch you can get. The lever should not protrude significantly forward of the microswitch case (truncate brutally if necessary).
 
+There is a left_hand variable which can be changed from 1 to -1 to mirror the shell for left hand use. There are other implications for this, see notes.
+
 At the bottom of the quirkeyv3.scad file are a number of modules that may be printed. I'd suggest building keycap() and test_pillar() first to make sure your microswitch dimensions are correct. Then repeat with double_key() and doubleswitch_pillar().
 
 Once these function, build base() and hollow_top_shell(). Four keycap() are also needed; note that software documentation suggests a colour scheme that is used by the user documentation and typing tutor.
@@ -37,3 +39,13 @@ Share and enjoy.
 
 Vik Olliver
 vik@diamondage.co.nz
+
+## Note For Left Hand Use
+While mirroring the shell and mentally reversing the key combinations will work, some of the mnemonics will be the wrong way round and need to be reversed. These are notably:
+
+()/\{}[]
+
+It may be neccessary to change some letter mnemonics that mimic the character direction:
+
+BDFKLR
+
