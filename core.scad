@@ -4,7 +4,7 @@ include <quirkey.inc>
 
 // This is the rounded bit you put the heel of your palm on.
 // Round off the lower edge of the rear of the shell.
-heel_rad=4;
+heel_rad=3.5;
 module heel() translate([0,palm_rest_rad,0]) union() {
     // Smoothed cylindrical bit where palm rests
     translate([0,0,palm_rest_rad]) rotate([-wrist_tilt,0,0]) {
@@ -60,4 +60,3 @@ module core_form()  intersection() {
 }
 
 core_form();
-
