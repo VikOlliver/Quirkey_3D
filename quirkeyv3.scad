@@ -194,8 +194,11 @@ module keycap() union() {
         translate([keycapWidth/2,0,keycapHeight]) rotate([0,3,0]) translate([5,0,0]) cube([10,keycapWidth*2,keycapHeight*4],center=true);
    }
    // The "toe". This stops the back of the keycap flipping up out of the case.
-   translate([-keycapWidth/2+1,0,keycapToeHeight/2]) 
-   cube([keycapToeLen,keycapToeWidth,keycapToeHeight],center=true);
+   translate([-keycapWidth/2+1,0,keycapToeHeight/2]) difference() {
+        // Slope the back top edge to stop it catching on the inside of the shell if that's rough.
+        cube([keycapToeLen,keycapToeWidth,keycapToeHeight],center=true);
+        translate([-keycapToeLen/2,0,keycapToeHeight*0.75]) rotate([0,-45,0]) cube([keycapToeLen,keycapToeWidth*2,keycapToeHeight],center=true);
+   }
 }
 
 // A double keycap for the thumb buttons, working like a teeter-totter.
@@ -220,7 +223,7 @@ module double_key() {
         translate([-doubleswitchSpacing/2,doublekeyWidth/2,-1.5]) cube([lever_width,doublekeyWidth,6],center=true);
         // The command key slots
         translate([doubleswitchSpacing/2,-doublekeyWidth/2+0.01,-1]) cube([lever_width,doublekeyWidth,3],center=true);
-       translate([doubleswitchSpacing/2,doublekeyWidth/2,-1]) cube([lever_width,doublekeyWidth,6],center=true);
+       translate([doubleswitchSpacing/2,doublekeyWidth/2,-1.5]) cube([lever_width,doublekeyWidth,6],center=true);
         // Slope the sides
         translate([-doublekeyWidth/2,0,0])  rotate([0,2,0]) translate([-5,0,0]) cube([10,doublekeyLength*2,doublekeyHeight*4],center=true);
         translate([doublekeyWidth/2,0,0])  rotate([0,-2,0]) translate([5,0,0]) cube([10,doublekeyLength*2,doublekeyHeight*4],center=true);
@@ -402,7 +405,7 @@ module switch_pillar(ht) translate([0,0,-ht]) {
                 cube([pillarWid*3,switchPillarShave*3,switchPillarShave*3],center=true);
         }
         // Wiring slot
-        translate([0,-pillarLen/2,ht*2-17]) cube([3.5,pillarLen,ht*2],center=true);
+        translate([0,-pillarLen/2,ht*2-18]) cube([3.5,pillarLen,ht*2],center=true);
         // Switch cavity in the top
         translate([0,0,ht]) switch_socket();
         // Slot for pivot
@@ -460,7 +463,7 @@ module doubleswitch_pillar(ht) translate([0,0,-ht]) {
 
 // Test part for switch fitting
 module test_pillar() difference() {
-    translate([0,0,18]) switch_pillar(18);
+    translate([0,0,20]) switch_pillar(20);
     translate([0,0,-50]) cube(100,center=true);
 }
 
@@ -541,6 +544,6 @@ module base() scale([left_hand,1,1]) intersection() {
 //translate([-35,0,0]) thumbkey();
 //translate([30,0,0]) commandkey();
 
-//base();
+base();
 //translate([0,0,base_ht]) 
- hollow_top_shell();
+// hollow_top_shell();
