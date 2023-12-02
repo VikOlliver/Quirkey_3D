@@ -160,7 +160,7 @@ module finger() {
 
 // Hole for keycap to poke through
 module keycapHole() {
-    translate([0,0.6,0]) cube([keycapWidth+1.6,keycapWidth+2.5,100],center=true);
+    translate([0,0.6,0]) cube([keycapWidth+1.6,keycapWidth+3,100],center=true);
 }
 
 // Fingertip model with a keycap hole attached
@@ -203,7 +203,7 @@ module keycap() union() {
 
 // A double keycap for the thumb buttons, working like a teeter-totter.
 // Slot sizes are uneven because thumb pressure and angle change with position.
-module double_key() {
+module doubleKey() {
     difference() {
         union() {
             // Body of key
@@ -220,10 +220,40 @@ module double_key() {
         // Command key first
         // The thumb key slots
        translate([-doubleswitchSpacing/2,-doublekeyWidth/2+0.01,-1.3]) cube([lever_width,doublekeyWidth,3],center=true);
-        translate([-doubleswitchSpacing/2,doublekeyWidth/2,-1.5]) cube([lever_width,doublekeyWidth,6],center=true);
+        translate([-doubleswitchSpacing/2,doublekeyWidth*0.4,-1.5]) cube([lever_width,doublekeyWidth,6],center=true);
         // The command key slots
         translate([doubleswitchSpacing/2,-doublekeyWidth/2+0.01,-1]) cube([lever_width,doublekeyWidth,3],center=true);
-       translate([doubleswitchSpacing/2,doublekeyWidth/2,-1.5]) cube([lever_width,doublekeyWidth,6],center=true);
+       translate([doubleswitchSpacing/2,doublekeyWidth*0.4,-1.5]) cube([lever_width,doublekeyWidth,6],center=true);
+        // Slope the sides
+        translate([-doublekeyWidth/2,0,0])  rotate([0,2,0]) translate([-5,0,0]) cube([10,doublekeyLength*2,doublekeyHeight*4],center=true);
+        translate([doublekeyWidth/2,0,0])  rotate([0,-2,0]) translate([5,0,0]) cube([10,doublekeyLength*2,doublekeyHeight*4],center=true);
+    }
+ }
+
+// A double keycap for the thumb buttons, working like a teeter-totter,
+ // but with an extra long thumb spur.
+// Slot sizes are uneven because thumb pressure and angle change with position.
+module doubleKey() {
+    difference() {
+        union() {
+            // Body of key
+            translate([0,0,doublekeyHeight/2])
+                cube([doublekeyWidth,doublekeyLength, doublekeyHeight],center=true);
+            // captive pivots
+            translate([doubleswitchPivotShift,0,pivotRad]) rotate([90,0,0]) cylinder(h=pillarWall*4+doublekeyLength,r=pivotRad,center=true,$fn=25);
+        }
+        // Finger slots
+        translate([doublekeyWidth*.24,0,finger_groove_rad*2+doublekeyHeight-1]) rotate([180,0,180]) finger();
+        translate([-doublekeyWidth*.24,0,finger_groove_rad*2+doublekeyHeight-1]) rotate([180,0,180]) finger();
+        translate([0,2,finger_groove_rad*2+doublekeyHeight-1]) scale([0.2,1,1]) rotate([180,0,180]) finger();
+        // Switch arm slots
+        // Command key first
+        // The thumb key slots
+       translate([-doubleswitchSpacing/2,-doublekeyWidth/2+0.01,-1.3]) cube([lever_width,doublekeyWidth,3],center=true);
+        translate([-doubleswitchSpacing/2,doublekeyWidth*0.4,-1.5]) cube([lever_width,doublekeyWidth,6],center=true);
+        // The command key slots
+        translate([doubleswitchSpacing/2,-doublekeyWidth/2+0.01,-1]) cube([lever_width,doublekeyWidth,3],center=true);
+       translate([doubleswitchSpacing/2,doublekeyWidth*0.4,-1.5]) cube([lever_width,doublekeyWidth,6],center=true);
         // Slope the sides
         translate([-doublekeyWidth/2,0,0])  rotate([0,2,0]) translate([-5,0,0]) cube([10,doublekeyLength*2,doublekeyHeight*4],center=true);
         translate([doublekeyWidth/2,0,0])  rotate([0,-2,0]) translate([5,0,0]) cube([10,doublekeyLength*2,doublekeyHeight*4],center=true);
@@ -231,14 +261,55 @@ module double_key() {
  }
 
 // Hole that a double keycap fits through.
- module doublekeyHole() {
+ module longDoublekey() {
+    difference() {
+        union() {
+            // Body of key
+            translate([0,0,doublekeyHeight])
+                cube([doublekeyWidth,doublekeyLength, doublekeyHeight*2],center=true);
+            // captive pivots
+            translate([doubleswitchPivotShift,0,pivotRad]) rotate([90,0,0]) cylinder(h=pillarWall*4+doublekeyLength,r=pivotRad,center=true,$fn=25);
+        }
+        // Finger slots
+        translate([doublekeyWidth*.14,2,finger_groove_rad*2+doublekeyHeight-1]) rotate([180,0,180]) finger();
+        translate([-doublekeyWidth*.14,2,finger_groove_rad*2+doublekeyHeight-1]) rotate([180,0,180]) finger();
+        translate([0,2,finger_groove_rad*2+doublekeyHeight-1]) scale([0.2,1,1]) rotate([180,0,180]) finger();
+        // Switch arm slots
+        // Command key first
+        // The thumb key slots
+       translate([-doubleswitchSpacing/2,-doublekeyWidth/2+0.01,-1.3]) cube([lever_width,doublekeyWidth,3],center=true);
+        translate([-doubleswitchSpacing/2,doublekeyWidth*0.4,-1.5]) cube([lever_width,doublekeyWidth,6],center=true);
+        // The command key slots
+        translate([doubleswitchSpacing/2,-doublekeyWidth/2+0.01,-1]) cube([lever_width,doublekeyWidth,3],center=true);
+       translate([doubleswitchSpacing/2,doublekeyWidth*0.4,-1.5]) cube([lever_width,doublekeyWidth,6],center=true);
+        // Slope the sides
+        translate([-doublekeyWidth/2,0,0])  rotate([0,2,0]) translate([-5,0,0]) cube([10,doublekeyLength*2,doublekeyHeight*4],center=true);
+        translate([doublekeyWidth/2,0,0])  rotate([0,-2,0]) translate([5,0,0]) cube([10,doublekeyLength*2,doublekeyHeight*4],center=true);
+    }
+ }
+
+// A double keycap for the thumb buttons, working like a teeter-totter.
+// Slot sizes are uneven because thumb pressure and angle change with position.
+module doublekeyHole() {
         cube([doublekeyWidth+2.3,doublekeyLength+2.3,100],center=true);
  }
 
 // Double key with the command hey cut out and pin hole in it.
  module thumbkey() scale([left_hand,1,1]) {
      difference() {
-        double_key();
+        doublekey();
+         // Lop off the command key
+         translate([doublekeyLength/2,0, doublekeyHeight]) cube([doublekeyLength,doublekeyWidth*2,doublekeyHeight],center=true);
+     }
+     // Poke a pin in it
+     translate([doublekeyLength/2,0, doublekeyHeight/2]) pin();
+}
+
+// Double key with the command hey cut out and pin hole in it.
+// as thumbkey() but has extra long thumb spur.
+ module longThumbkey() scale([left_hand,1,1]) {
+     difference() {
+        longDoublekey();
          // Lop off the command key
          translate([doublekeyLength/2,0, doublekeyHeight]) cube([doublekeyLength,doublekeyWidth*2,doublekeyHeight],center=true);
      }
@@ -250,7 +321,7 @@ module double_key() {
 module commandkey() scale([left_hand,1,1]) translate([0,0,-doublekeyHeight/2]) {
      difference() {
          intersection() {
-            double_key();
+            longDoublekey();
              // Lop off the command key, tiny displacement for interference fit.
              translate([doublekeyLength/2+0.1,0, doublekeyHeight]) cube([doublekeyLength,doublekeyWidth*2,doublekeyHeight],center=true);
          }
@@ -279,6 +350,23 @@ module strain_relief_hole() {
     }
 }
 
+thumb_shape_maj=keycapWidth*0.9;
+thumb_shape_min=keycapWidth*0.5;
+thumb_shape_sep=overall_length*0.9;
+module weird_thumb_shape() {
+    rotate([20,-55,0]) union() {
+            sphere(thumb_shape_maj,$fn=60);
+            rotate([90,0,0]) cylinder(r1=thumb_shape_maj,r2=thumb_shape_min,h=thumb_shape_sep,$fn=60);
+            translate([0,-thumb_shape_sep,0]) sphere(thumb_shape_min,$fn=60);
+    }
+}
+
+// The previous scalop that didn't come all the way to the rear of the shell.
+// Dunno if I like the new one yet.
+module weird_thumb_shape_old() {
+    sphere(keycapWidth*0.95,$fn=60);
+}
+
 // The body core with finger grooves and thumb divots knocked out of it.
 module body_construction() {
     difference() {
@@ -302,7 +390,8 @@ module body_construction() {
         }
         // Divot for thumb between switches
         translate([-4-shellThickness/2,-2,shellThickness/2]) translate(thumb_loc)
-            rotate([3-wrist_tilt,thumb_slope+10,0])  rotate(thumb_twist) scale([2,1.8,0.45]) sphere(keycapWidth*0.95,$fn=60);
+            rotate([3-wrist_tilt,thumb_slope+10,0])  rotate(thumb_twist) scale([2,1.8,0.45]) 
+        weird_thumb_shape();
     }
 }
 
@@ -437,7 +526,7 @@ module doubleswitch_pillar(ht) translate([0,0,-ht]) {
         translate([doublepillarWid/2,0,ht]) rotate([0,45,0]) cube([dsTrim,doublepillarLen*2,dsTrim],center=true);
         translate([-doublepillarWid/2,0,ht]) rotate([0,45,0]) cube([dsTrim,doublepillarLen*2,dsTrim],center=true);
         // Wiring slot
-        translate([microswitch_len/2-0.01,0,ht*2-17]) cube([doublepillarWid,3.5,ht*2],center=true);
+        translate([microswitch_len/2-0.01,0,ht*2-20]) cube([doublepillarWid,3.5,ht*2],center=true);
         // Switch cavity in the top
         translate([0,0,ht]) doubleswitch_socket();
          // Gaps allowing for extraction of a switch with pilers
@@ -458,7 +547,7 @@ module doubleswitch_pillar(ht) translate([0,0,-ht]) {
         // tilt the switch
         rotate([4,0,0])
         translate([keycapWidth/2-pivotRad,0,-1-pivotRad])
-        double_key();*/
+        doublekey();*/
 }
 
 // Test part for switch fitting
@@ -540,10 +629,12 @@ module base() scale([left_hand,1,1]) intersection() {
 //translate([0,30,0]) rotate([0,0,90])
 //keycap();
 //translate([0,0,18]) doubleswitch_pillar(18);
-//translate ([0,30,0]) double_key();
+//translate ([0,30,0]) doublekey();
+// Don't use thumbkey, use longThumbkey for normal prints.
 //translate([-35,0,0]) thumbkey();
+//translate([-35,0,0]) longThumbkey();
 //translate([30,0,0]) commandkey();
 
-base();
+//base();
 //translate([0,0,base_ht]) 
-// hollow_top_shell();
+ hollow_top_shell();
