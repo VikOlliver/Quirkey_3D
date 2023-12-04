@@ -32,6 +32,8 @@ You will also need EITHER a double_key() is you are following your own colour sc
 
 An assembly document is in there with the rest of the files.
 
+Pre-built STL files for left- and right-handed versions can be found at https://www.printables.com/model/667870-quirkey-v3-accessibility-keyboard-for-one-handed-u
+
 ## Acknowledgements
 This work is based largely on the efforts of Cy Endfield and his partner Chris Rainey's Microwriter Ltd. in the UK during the 80's. Their concept was brilliant, and many people still use their Microwriter and Quinkey devices. Time has passed, patents have lapsed, and the electronics have become more affordable, thanks to the likes of Arduino and the Raspberry Pi Foundation. Credit is also due to my colleages Dr. Adrian Bowyer, Dr. Ed Sells et al for creating the RepRap and thus making 3D printing itself affordable and accessible for so many people.
 
@@ -41,11 +43,5 @@ Vik Olliver
 vik@diamondage.co.nz
 
 ## Note For Left Hand Use
-While mirroring the shell and mentally reversing the key combinations will work, some of the mnemonics will be the wrong way round and need to be reversed. These are notably:
-
-()/\{}[]
-
-It may be neccessary to change some letter mnemonics that mimic the character direction:
-
-BDFKLR
+While mirroring the shell and mentally reversing the key combinations will mostly work, the writing and Pi Pico anchor points will be inverted and some characters flow naturally in one direction or another. So there is a left_hand flag in the quirkeyv3.scad file to flip it into leftie mode properly, and proper left hand documentation.
 
