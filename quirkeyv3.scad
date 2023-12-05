@@ -90,7 +90,7 @@ module pin_body() {
 
 // Chop splits in pin and flatten sides.
 module pin() {
-    translate([-pinhole_min/2,0,0]) intersection() {
+    intersection() {
         difference() {
             pin_body();
             translate([0,0,pinhole_len/2]) cube([pinhole_max*4,pin_split_wid,pinhole_len*0.75],center=true);
@@ -633,7 +633,7 @@ module base() scale([left_hand,1,1]) intersection() {
 // Don't use thumbkey, use longThumbkey for normal prints.
 //translate([-35,0,0]) thumbkey();
 //translate([-35,0,0]) longThumbkey();
-//translate([30,0,0]) commandkey();
+//translate([-35,20,0]) commandkey();
 
 //base();
 //translate([0,0,base_ht]) 
