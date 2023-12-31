@@ -1,0 +1,38 @@
+Development History of The Quirkey Chord Keyboard
+By Vik Olliver, vik@diamondage.co.nz 17 Dec 2023
+
+Overview
+
+The Quirkey is a 6-key chord keyboard based on the Microwriter device developed in the '80s to provide a one-handed keyboard suitable for people with limited arm movement and brittle bones. See Wikipedia for the history. While the author did develop drivers for the Microwriter and its offshoot the Quinkey, he has no direct relationship with the original work.
+
+Pre-development Devices
+
+The author used Microwriter devices extensively, and wished to recreate a device that allowed him to use the obsolescent technology. First atttempts simply took a Quinkey shell and wired the switches to an Arduino Leonardo to create a USB HID peripheral.
+
+Quirkey V1
+
+This was an ambitious attempt to recreate the Microwriter with an ESP32, storing text in onboard flash, using an OLED display, and emulating a Bluetooth keyboard and mouse. The 3D printed case provided a slide-out tray for the display and featured a central miniature joystick for mouse emulation. Development ceased in 2018 as it became apparent the hardware was not practical and the transfer of typed documents to a host PC would be overly complex.
+
+Quirkey V2
+
+This went back to the basic USB HID device concept using a simplified version of the 3D printed shell developed for the V1, using a small Arduino clone microcontroller based on the AT32U4 that was cheap and abundant at the time. The mouse joystick was abandoned as being too fiddly to operate, and a "mouse mode" using the keys to control direction was implemented. The project was taken to Bali Fab Fest in 2022 and shown to various accessibility groups, who were interested but disuaded by inadequate documentation.
+
+Documentation for use, assembly, and programming was duly created, along with a typing tutor. The keys were individually coloured to simplify the teaching process.
+
+Covid caused supply problems with the AT32U4 and new firmware in CircuitPython running on a Raspberry Pi Pico was written. The resulting package was taken to FAB23 in Bhutan where 15 devices were made in a workshop and distributed to various interest groups.
+
+Quirkey V3
+
+The Bhutan workshop revealed that the need to epoxy the keycaps on was a blocker for rapid assembly, and that an awful lot of people can't handle epoxy well. Also, the requirement to solder things inside the case was difficult for novice solderists. Consequently the V3 used keycaps that rested on the microswitches, used a base with key pillars on rather than mounting switches in the top shell, and provided slots so that the entire wiring harness could be inserted or removed intact.
+
+Press-fit cavities were made for the microswitches, and hinged keycaps to fit in clips above them. An upper shell held the switch hinges in place, preventing the Quirkey from falling apart or having the keycaps wrenched off. The two thumb switches were combined into a sort of rocker switch that could be pressed hard to activate both switches simultaneously.
+
+This version was given to a local stroke recovery unit for trials, and resulted in the first actual unit sale.
+
+Quirkey V4
+
+Problems arose with the microswitches. As well as not all being the same size, reliability became an issue as manufacturers initiated a race to the bottom. Previously an operating life of 100,000+ cycles were to be expected, but finding quality switches became difficult.
+
+Microswitches had been used since the original Microwriter designs. The abundance of cheap microswitches appeared at first to be a benefit, then a liability. "MX Cherry" keyboard switch modules were more readily accessible. The base was redesigned to hold these, and the keycaps connected directly to the switches. Due to the weakness of 3D printed keycap stems flanges were required to provide mechanical stability and retention to the keycaps. These produced more noise in use but provided greater reliability and durability.
+
+The two thumb keys were separated again, as the larger MX switches did not allow for a rocking/depression movement.
