@@ -2,13 +2,13 @@
 OpenSCAD models for the parts of a Quirkey chord keyboard.
 
 ## Overview
-These files build a 3D model of a one-handed keyboard with 6 keys (1 per digit, a 2-way for the thumb) using microswitches. Code and user documentation is available in neighbouring repositories for AT32U4-based Arduinos and Raspberry Pi Pico compatibles.
+These files build a 3D model of a one-handed keyboard with 6 keys (1 per digit, a 2-way for the thumb) using microswitches (V3) or MX type keyswitches (V4). Code and user documentation is available in neighbouring repositories for AT32U4-based Arduinos and Raspberry Pi Pico compatibles.
 
 ## Concept And Rationale
 On a Quirkey, fingers never move from their assigned keys, and press simultaneous "chords' to create characters. This makes this a usefull accessibility keyboard for people with one hand, restricted or absent arm movement, tremor (the arm can be sandbagged in place), eyesight issues, RSI, or having a posture that renders using a conventional keyboard impractical (such as having to remain laid flat). They are also very handy for typing on for the rest of us, as you become an instant touch-typist and can focus on things other than the keyboard.
 
 ## Revision Notes
-This revision features captive keys that do not require glueing on like the earlier versions. The base now has pillars that hold the microswitches and keycaps, with slots added so that the entire wiring harness can be installed and removed without having to solder or unsolder any wires. The shell is now hollow, with manually-added support panels so that the whole thing prints without any support material (at least on a Prusa Mk3). The thumb and control key have been combined into one component.
+V3 and V4 feature captive keys that do not require glueing on like the earlier versions. The base now has pillars that hold the switches and keycaps, with slots added so that the entire wiring harness can be installed and removed without having to solder or unsolder any wires. The shell is now hollow, with manually-added support panels so that the whole thing prints without any support material (at least on a Prusa Mk3). The thumb and control key have been combined into one component on the V3.
 
 ## Build Process
 
@@ -24,13 +24,12 @@ In the quirkeyv3.scad file are a series of microswitch_* variables. Use these to
 
 There is a left_hand variable which can be changed from 1 to -1 to mirror the shell for left hand use. There are other implications for this, see notes.
 
-At the bottom of the quirkeyv3.scad file are a number of modules that may be printed. I'd suggest building keycap() and test_pillar() first to make sure your microswitch dimensions are correct. Then repeat with double_key() and doubleswitch_pillar().
+At the bottom of the quirkeyv*.scad file are a number of modules that may be printed. I'd suggest building keycap() and test_pillar() first to make sure your switch dimensions are correct. Then repeat with double_key() and doubleswitch_pillar().
 
 Once these function, build base() and hollow_top_shell(). Four keycap() are also needed; note that software documentation suggests a colour scheme that is used by the user documentation and typing tutor.
+V3 needs EITHER a double_key() is you are following your own colour scheme, OR a thumbkey() and commandkey(). The latter should press-fit, but in practice a drop of superglue is advisable. The thumbkey() is best printed without a brim due to the shallow groove under it. V4 uses two separate thumbkeys.
 
-You will also need EITHER a double_key() is you are following your own colour scheme, OR a thumbkey() and commandkey(). The latter should press-fit, but in practice a drop of superglue is advisable. The thumbkey() is best printed without a brim due to the shallow groove under it.
-
-An assembly document is in there with the rest of the files.
+Assembly documents are in there with the rest of the files.
 
 Pre-built STL files for left- and right-handed versions can be found at https://www.printables.com/model/667870-quirkey-v3-accessibility-keyboard-for-one-handed-u
 
