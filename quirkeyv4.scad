@@ -63,10 +63,11 @@ boardPillarHt=8;        // Distance from base to top of support pillar
 // Location of the reset button relative to the board.
 boardResetHoleY=6.9;
 boardResetHoleX=12.25;
-boardPlacement=[boardLen/2+shellThickness+10,first_finger_loc[1]-7-boardLen/2,base_ht];
+boardPlacement=[boardLen/2+shellThickness+6,thumb_loc[1]+22,base_ht];
 
 // Screw hole variables
 screwRad=1.9;
+screwHeadRad=4;
 screw_from_back_edge=shellThickness+screwRad;
 screw_from_rear_side=shellThickness+screwRad;
 screw_from_front_side=shellThickness+screwRad+3*junior_scale;
@@ -136,7 +137,8 @@ module screw_holes() {
     for (i=[0:len(screw_hole_list)-1]) {
         translate(screw_hole_list[i]) translate([0,0,-0.1]) {
             cylinder(h=15,r1=screwRad,r2=screwRad-0.3);
-            cylinder(h=2,r1=4,r2=1.5);
+            // 45 degree taper for screw head
+            cylinder(h=screwHeadRad,r1=screwHeadRad,r2=0);
         }
     }
 }
@@ -171,8 +173,15 @@ module boardPillars() union() {
 
 // The very basic solid form. Compiled separately because compiling it inline causes
 // OpenSCAD to crash and core dump for unknown reasons.
-module core_form() {
+module core_form() union() {
     import("core.stl");
+    // Rings around rear screw holes. This fixes a printing issue that requires a brim.
+    // Avoiding the brim saves on manufacturing time 'cos it doesn't need cutting off.
+    for (i=[0:1]) {
+        translate(screw_hole_list[i]) {
+            cylinder(h=base_ht,r=screwHeadRad+1.5*junior_scale);
+        }
+    }
 }
 
 // Finger groove. Lays flat, round end facing away, hole for keycap
@@ -445,7 +454,7 @@ module switch_pillar(ht) translate([0,0,-ht]) {
             cube([pillarWid+pillarWall*4,keycapToeWidth+keyswitch_clearance*3,keycapInset*2],center=true);
     }
     // DEBUG: The keycap for testing fit.
-    %translate([0,0,ht-keycapInset]) color([1,0,0]) rotate([0,0,90]) keycap();
+    //%translate([0,0,ht-keycapInset]) color([1,0,0]) rotate([0,0,90]) keycap();
 }
 
 // Amount to trim off top corners
@@ -470,17 +479,17 @@ module doubleswitch_pillar(ht) translate([0,0,-ht]) {
          translate([-keyswitch_rim_wid/2-(keycapToeWidth+keyswitch_clearance*3)/2,-(doublepillarLen+pillarWall*4)/2,ht-thumb_key_extension-keycapToeHeight-keycapInset])
             cube([keycapToeWidth+keyswitch_clearance*3,doublepillarLen+pillarWall*4,keycapInset*4]);
     }
-    // DEBUG: The keycap for testing fit.
-    
+    // DEBUG: The keycaps for testing fit.
+    /*
     translate([keyswitch_rim_wid/2,0,ht-keycapInset-thumb_key_extension+1]) color([1,0,0])
         %rotate([0,0,90]) thumbcap();
     translate([-keyswitch_rim_wid/2,0,ht-keycapInset-thumb_key_extension+1]) color([1,0,0])
-        %rotate([0,0,-90]) thumbcap();
+        %rotate([0,0,-90]) thumbcap();*/
 }
 
 // Test part for switch fitting
-module test_pillar() difference() {
-    translate([0,0,25]) switch_pillar(25);
+module test_pillar(ht) difference() {
+    translate([0,0,ht]) switch_pillar(ht);
     translate([0,0,-50]) cube(100,center=true);
 }
 
@@ -528,7 +537,7 @@ module base() scale([left_hand,1,1]) intersection() {
             // Add screw holes
             screw_holes();
             // Add a "Pi hole" Allow an extra 20 (40/2)for the USB plug
-            translate([0,0,6]) translate(boardPlacement) cube([boardLen+40,boardWid+8,12],center=true);
+            translate([0,0,8]) translate(boardPlacement) cube([boardLen+34,boardWid+4,16],center=true);
             // A hole right under the reset button. Flip this for the left-hand version as board
             // is rotated through 180 degrees to point at the other side of the keyboard shell.
             translate([boardLen/2-boardResetHoleX,left_hand*(boardResetHoleY-boardWid/2),0])
@@ -557,13 +566,35 @@ module base() scale([left_hand,1,1]) intersection() {
     }
 }
 
+// Holds 4 key switches, and can be clamped in a PCB holder to make
+// soldering wires onto switches easier
+jigSpacing=2;
+module key_soldering_jig() {
+    for (i=[0:3])
+        translate([(pillarWid+jigSpacing)*i,0,0])
+            // Basically a key pillar with a lot of the top lopped off for soldering access
+            difference() {
+                union() {
+                    test_pillar(15);
+                    // Tabs to grab on to each other and PCB holder
+                    cube([pillarWid+jigSpacing*2+2,pillarLen,pillarWall],center=true);
+                }
+                // Lop off top
+                translate([0,0,50+3+keycapInset]) cube(100,center=true);
+                // Hole for keyswitch head to poke through
+                cube([keyswitch_wid,keyswitch_len,15],center=true);
+            }
+}
+
+// Thing to hold keyswitches while you solder the wires on (optional)
+//key_soldering_jig();
 // Use this to test switch and keycap fit
-//test_pillar();
+//test_pillar(25);
 //translate([0,30,0]) rotate([0,0,90])
 //keycap();
 //test_double_pillar();
-translate([0,-25,0]) thumbcap();
+//translate([0,-25,0]) thumbcap();
 // translate([0,25,0]) thumbcap();
-// base();
+ base();
 //translate([0,0,base_ht]) 
-// hollow_top_shell();
+ //hollow_top_shell();
