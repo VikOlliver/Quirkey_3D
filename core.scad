@@ -59,4 +59,10 @@ module core_form()  intersection() {
     }
 }
 
-core_form();
+smooth_rad=1.8;     // Smoothing radius for corners
+// Scale a smoothed version down so it still fits in the defined overall size
+scale([(overall_width-2*smooth_rad)/overall_width,(overall_length-2*smooth_rad)/overall_length,1]) translate([smooth_rad,smooth_rad,0]) minkowski() {
+    // Smooth X&Y axis without altering height
+    cylinder(h=0.001,r=1.8,center=true,$fn=16);
+    core_form();
+}
