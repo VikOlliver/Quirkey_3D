@@ -42,5 +42,5 @@ Vik Olliver
 vik@diamondage.co.nz
 
 ## Note For Left Hand Use
-While mirroring the shell and mentally reversing the key combinations will mostly work, the writing and Pi Pico anchor points will be inverted and some characters flow naturally in one direction or another. So there is a left_hand flag in the quirkeyv3.scad file to flip it into leftie mode properly, and proper left hand documentation.
+While mirroring the shell and mentally reversing the key combinations will mostly work, the writing and Pi Pico anchor points will be inverted and some characters flow naturally in one direction or another. So there is a left_hand flag in the quirkeyv*.scad file to flip it into leftie mode properly, and proper left hand documentation.
 
