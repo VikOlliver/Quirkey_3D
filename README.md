@@ -14,7 +14,7 @@ V3 and V4 feature captive keys that do not require glueing on like the earlier v
 
 OpenSCAD Preferences/Advanced may need to be changed to allow 20,000 elements as these models get quite complicated.
 
-The quirkey.inc file contains a scaling factor "junior_scale" to suit the user's hand size. Going much smaller than 0.85 (a "junior" size) may cause ... issues.
+The quirkey.inc file contains a scaling factor "junior_scale" to suit the user's hand size. Going much smaller than 0.85 (a "junior" size) may cause ... issues. As it is, the V4 version using MX keyswitches does not have enough room for the switch, so for little people please use the V3 files and quality microswitches.
 
 A factor of 0.92 is about right for the average Anglo, and 1.0 suits me personally 'cos I have big hands. Changing the scaling factor does not alter the size of the key caps.
 
