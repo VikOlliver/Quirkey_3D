@@ -1,7 +1,6 @@
 // quirkeyv4.scad - Quirkey version to fit MX clone keyboard switches.
 // Released under the GPL 3.0 or later by vik@diamondage.co.nz
 // Todo:
-// Inset the keys by another 0.4mm
 // Squish key stem a little more
 
 include <quirkey.inc>
@@ -215,7 +214,10 @@ keyswitch_top_section=12;      // Width of the square section knocked out to cle
 module toe_pair() {
     translate([0,0,keycapToeHeight/2]) {
         difference() {
-            cube([keycapToeWidth,pillarWid,keycapToeHeight],center=true);
+            // With of toes is slightly less than the pillar width to avoid collisions with
+            // the casing on extremely small-sized keyboards.
+            // This decision may come back to bite me.
+            cube([keycapToeWidth,pillarWid-1,keycapToeHeight],center=true);
             translate([-keycapToeWidth/2,-pillarWid/2,0]) rotate([0,0,45]) cube(keycapToeHeight*1.4, center=true);
             translate([keycapToeWidth/2,-pillarWid/2,0]) rotate([0,0,45]) cube(keycapToeHeight*1.4, center=true);
             translate([-keycapToeWidth/2,pillarWid/2,0]) rotate([0,0,45]) cube(keycapToeHeight*1.4, center=true);
@@ -395,10 +397,10 @@ module hollow_top_shell() scale([left_hand,1,1]) translate([0,0,-base_ht])  diff
             body_construction();
             reduced_core_form(shellThickness);
             // Chop the base off
-            translate([0,0,base_ht-overall_length]) cube(overall_length*2,center=true);
+            translate([0,0,base_ht-overall_length*2]) cube(overall_length*4,center=true);
             // Fancy schmanzy logo
             if (uselogo==1)
-                translate([overall_width/2,overall_length/2,overall_height*0.815-0.75]) rotate([-wrist_tilt,0,0]) scale([4*left_hand,4,4]) linear_extrude(height=10) import("quirkey_logo.svg");
+                translate([overall_width/2,overall_length/2,(overall_height+height_boost)*0.83-0.75]) rotate([-wrist_tilt,0,0]) scale([4*left_hand,4,4]) linear_extrude(height=10) import("quirkey_logo.svg");
         }
         translate([0,0,base_ht]) screw_pillars();
         // Some slices for bridging support
@@ -523,7 +525,7 @@ module base() scale([left_hand,1,1]) intersection() {
                 pillar_collection();
                 difference() {
                     core_form();
-                    translate([0,0,overall_length+base_ht]) cube(overall_length*2,center=true);
+                    translate([0,0,overall_length*2+base_ht]) cube(overall_length*4,center=true);
                 }
                 // Block to make cable support in.
                 translate([overall_width-shellThickness-6.1,cableHoleShift,4+base_ht])
@@ -595,6 +597,6 @@ module key_soldering_jig() {
 //test_double_pillar();
 //translate([0,-25,0]) thumbcap();
 // translate([0,25,0]) thumbcap();
- base();
+base();
 //translate([0,0,base_ht]) 
- //hollow_top_shell();
+// hollow_top_shell();
