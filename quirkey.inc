@@ -1,7 +1,10 @@
 // quirkey.inc - Common values for the quirkey keyboard
 
-junior_scale=0.92;  // Standard size is 1, intermediate 92, junior version best at 85%
+junior_scale=1.00;  // Standard size is 1, intermediate 0.92, junior version best at 85%
 shellThickness=4.5;               // Thickness of the top shell
+// If the junior scale is less than 0.9 we want to raise the height and switches.
+// This is needed to let large MX switches fit in the shell.
+height_boost=max(0,(0.92-junior_scale)*50);
 palm_width=88*junior_scale;      // Width of the palm only.
 thumb_width=25*junior_scale;     // Width of the thumb slope only
 palm_rest_rad=26*junior_scale;   // Radius of the bit the heel of the palm rests on
@@ -28,8 +31,8 @@ base_ht=4;  // Overall height of base.
 usb_cable_rad=3.7/2;
 
 // Location of the switch holes. Height of the fingers is relative to
-finger_base_ht=palm_rest_rad*1.34;
-thumb_base_ht=palm_rest_rad*1.2;
+finger_base_ht=(palm_rest_rad+height_boost)*1.34;
+thumb_base_ht=palm_rest_rad*1.2+height_boost;
 // Location of main thumb key
 thumb_loc=[thumb_width/2+finger_major_spacing*0.45-7*junior_scale,(thumb_up+fingertips_start)*0.37-6*junior_scale,thumb_base_ht+6.3*junior_scale];
 thumb_rot=[-10,thumb_slope+9,0];
@@ -43,5 +46,4 @@ ring_finger_loc=[finger_major_spacing*2+first_finger_left,fingertips_start+4,fin
 ring_finger_rot=[-35,0,0];
 pinkie_finger_loc=[finger_major_spacing*3+1+first_finger_left,fingertips_start-12,finger_base_ht+0.7];
 pinkie_finger_rot=[-18,0,0];
-
 
