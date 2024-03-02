@@ -10,6 +10,8 @@ On a Quirkey, fingers never move from their assigned keys, and press simultaneou
 ## Revision Notes
 V3 and V4 feature captive keys that do not require glueing on like the earlier versions. The base now has pillars that hold the switches and keycaps, with slots added so that the entire wiring harness can be installed and removed without having to solder or unsolder any wires. The shell is now hollow, with manually-added support panels so that the whole thing prints without any support material (at least on a Prusa Mk3). The thumb and control key have been combined into one component on the V3.
 
+Note that V3 will not scale below 92% unless you change height_boost to zero in line 7 of quirkey.inc due to issues in V4 where the larger MX switches hit the base.
+
 ## Build Process
 
 OpenSCAD Preferences/Advanced may need to be changed to allow 20,000 elements as these models get quite complicated.
