@@ -13,12 +13,12 @@ module heel() translate([0,palm_rest_rad,0]) union() {
         cube([overall_width,overall_length-palm_rest_rad,palm_rest_rad]);
     }
     // Corner radius on heel
-    translate([0,heel_rad-palm_rest_rad,heel_rad]) rotate([0,90,0])
+    translate([0,heel_rad-palm_rest_rad,heel_rad-height_boost]) rotate([0,90,0])
         cylinder(h=overall_width,r=heel_rad,$fn=pow(heel_rad,2));
     // Squared off heel
-    translate([0,-palm_rest_rad,0])
+    translate([0,-palm_rest_rad,-height_boost])
         difference() {
-            cube([overall_width,palm_rest_rad,palm_rest_rad]);
+            cube([overall_width,palm_rest_rad,palm_rest_rad+height_boost]);
             rotate([45,0,0])
                 translate ([overall_width,-1,0])
                     cube([overall_width*3,heel_rad*2,heel_rad*2],center=true);
@@ -28,13 +28,14 @@ module heel() translate([0,palm_rest_rad,0]) union() {
 // The very basic solid form, designed so that eveything happens relative
 // to the bottom rear corner of the heel.
 module core_form()  intersection() {
-    difference() {
+    translate([0,0,height_boost]) difference() {
         union() {
             // Part under heel of palm
             heel();
-            // Part directly under palm
-            translate([0,palm_rest_rad,0]) 
-                cube([overall_width,overall_length-palm_rest_rad,palm_rest_rad]);
+            // Part directly under palm the height boos lofts the whole assembly
+            // so big switches fit in a tiny shell.
+            translate([0,palm_rest_rad,-height_boost]) 
+                cube([overall_width,overall_length-palm_rest_rad+height_boost,palm_rest_rad+height_boost]);
         }
         // Subtract basic outline shaping parts.
         // Thumb side slope
