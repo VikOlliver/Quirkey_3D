@@ -1,7 +1,6 @@
 // quirkeyv4.scad - Quirkey version to fit MX clone keyboard switches.
 // Released under the GPL 3.0 or later by vik@diamondage.co.nz
-// Todo:
-// Squish key stem a little more
+// V4.1 adds rounded key edges, and a second USB cable port on the other side.
 
 include <quirkey.inc>
 // Logo takes a while to compile. If developing set this to disable it, otherwise use 1.
@@ -27,11 +26,12 @@ keyswitch_clearance=0.2;
 // NOT keyswitch stuff. This is the keycap dimensions.
 keycap_width=14;
 keycap_height=11;
-keycapInset=5;
+keycap_inset=5;
 keycapToeWidth=8;
 keycapToeHeight=2;  // "toe" that digs into the back of the pillar to limit key movement
 keycapToeLen=7;
 keycapClearance=1.0;
+keycap_radius=1.1;   // Rounding on the top face of the keys
 doublekeyWidth=26;
 doublekeyLength=keycap_width;
 doublekeyHeight=7+shellThickness;
@@ -233,28 +233,46 @@ keyswitch_stem_scale=[1,4/3.8,1];
 
 module keycap_body() union(){
     difference() {
-        difference() {
             // Keycap body
             union() {
                 // Basic cube shape of keycap, leaving a space for the stem, one side lopped off.
                 difference() {
-                    // Create body of keycap with "toes" to prevent it exiting through the lid
-                    union() {
-                        translate([0,0,keycap_height/2])
-                            cube([keycap_width,keycap_width,keycap_height],center=true);
-                        toe_pair();
-                    }
-                    // Hollow it out.
-                    translate([-keyswitch_top_section/2,0,keyswitch_stem/2])
-                        cube([keyswitch_top_section*2,keyswitch_top_section,keyswitch_stem+0.01],center=true);
+                    // Create body of keycap
+                    translate([0,0,(keycap_height-keycap_radius)/2])
+                        cube([keycap_width-keycap_radius*2,keycap_width-keycap_radius*2,keycap_height-keycap_radius],center=true);
+                    // Knock out finger groove in top
+                    translate([keycap_width*.2,0,finger_groove_rad*2+keycap_height-1-keycap_radius]) rotate([180,0,90]) finger();
                 }
-                // The stem
-                translate([0,0,keycap_height/2])
-                    scale(keyswitch_stem_scale) cylinder(h=keycap_height,r=keyswitch_stem_length/2,center=true,$fn=25);
             }
-            // Knock a hole in the stem, but leave some solid material at the top
-            scale(keyswitch_stem_scale) cylinder(h=keyswitch_stem*2-2,r=keyswitch_stem_centre,center=true,$fn=25);
+    }
+}
+
+// Final keycap with retaining "toes" and keyswitch stem
+module keycap() union() {
+    // Take the basic body, round the top and sides, then stick the retaining "toes" on it.
+    difference() {
+        union() {
+            minkowski() {
+                keycap_body();
+                // We only want the top and sides to be rounded, so lop off the bottom of the radiuser
+                difference() {
+                    sphere(keycap_radius,$fn=24);
+                    translate([0,0,-keycap_radius*2]) cube(keycap_radius*4,center=true);
+                }
+            }
+            // Toes, sticking out either side
+            toe_pair();
         }
+        // Hollow it out.
+        translate([-keyswitch_top_section/2,0,keyswitch_stem/2])
+            cube([keyswitch_top_section*2,keyswitch_top_section,keyswitch_stem+0.01],center=true);
+    }
+    difference() {
+        // The stem
+        translate([0,0,keycap_height/4])
+            scale(keyswitch_stem_scale) cylinder(h=keycap_height/2,r=keyswitch_stem_length/2,center=true,$fn=25);
+        // Knock a hole in the stem, but leave some solid material at the top
+        scale(keyswitch_stem_scale) cylinder(h=keyswitch_stem*2-2,r=keyswitch_stem_centre,center=true,$fn=25);
     }
 }
 
@@ -272,11 +290,61 @@ module thumbcap() {
             union() {
                 // Basic cube shape of keycap, leaving a space for the stem, one side lopped off.
                 difference() {
-                    // Create body of keycap with "toes" to prevent it exiting through the lid
+                    // Create body of keycap
                     union() {
                         // Unshifted lower section
                         translate([-keycap_width/2,-keycap_width/2,0])
                             cube([keycap_width,keycap_width,thumbcap_trim_ht]);
+                        // "toes" to prevent it tilting, twisting, or exiting through the lid
+                        rotate([0,0,90]) toe_pair();
+                        // The top of the keycap will be bevelled by this minkowski sum
+                        minkowski() {
+                            // Shifted top section with a bevelled overhanging edge.
+                            difference() {
+                                translate([keycap_radius-keycap_width/2,keycap_radius/4+thumbcap_displace*2-keycap_width/2,thumbcap_trim_ht])
+                                    cube([keycap_width-keycap_radius*2,keycap_width-thumbcap_trim-keycap_radius,thumbcap_height-thumbcap_trim_ht-keycap_radius]);
+                                // The bevel
+                                translate([-keycap_width/2,keycap_width/2-thumbcap_trim+thumbcap_displace*2-keycap_radius,thumbcap_trim_ht]) rotate([-4,0,0])
+                                    cube([keycap_width*4,thumbcap_trim*1.4,(keycap_height-thumbcap_trim)*2],center=true);
+                                // Knock out finger groove in top
+                                translate([keycap_width*2,thumbcap_displace+thumbcap_trim,finger_groove_rad*2+thumbcap_height-1-keycap_radius])
+                                    rotate([180,0,90]) finger();
+                            }
+                             // We only want the top and sides to be rounded, so lop off the bottom of the radiuser
+                            difference() {
+                                sphere(keycap_radius,$fn=24);
+                                translate([0,0,-keycap_radius*2]) cube(keycap_radius*4,center=true);
+                            }
+                        }
+                    }
+                    // Whack a hole in the side for the lumpy top part of the switch
+                    translate([0,-keyswitch_top_section/2,keyswitch_stem/2])
+                        cube([keyswitch_top_section,keyswitch_top_section*2,keyswitch_stem+0.01],center=true);
+                }
+                // The stem
+                translate([0,0,thumbcap_height/4])
+                    scale(keyswitch_stem_scale) cylinder(h=thumbcap_height/2,r=keyswitch_stem_length/2,center=true,$fn=25);
+            }
+            // Knock a hole in the stem, but leave some solid material at the top
+            scale(keyswitch_stem_scale) cylinder(h=keyswitch_stem*2-2,r=keyswitch_stem_centre,center=true,$fn=25);
+       }
+    }
+}
+
+module old_thumbcap() {
+    union() {
+        difference() {
+            // Keycap body
+            union() {
+                // Basic cube shape of keycap, leaving a space for the stem, one side lopped off.
+                difference() {
+                    // Create body of keycap
+                    union() {
+                        // Unshifted lower section
+                        translate([-keycap_width/2,-keycap_width/2,0])
+                            cube([keycap_width,keycap_width,thumbcap_trim_ht]);
+                        // "toes" to prevent it exiting through the lid
+                        rotate([0,0,90]) toe_pair();
                         // Shifted top section with a bevelled overhanging edge.
                         translate([-keycap_width/2,thumbcap_displace*2-keycap_width/2,thumbcap_trim_ht]) difference() {
                             cube([keycap_width,keycap_width-thumbcap_trim,thumbcap_height-thumbcap_trim_ht]);
@@ -284,8 +352,6 @@ module thumbcap() {
                             translate([0,keycap_width-thumbcap_trim,0]) rotate([-4,0,0])
                                 cube([keycap_width*4,thumbcap_trim*1.4,(keycap_height-thumbcap_trim)*2],center=true);
                         }
-                        // Toes, sticking out either side
-                        rotate([0,0,90]) toe_pair();
                     }
                     // Whack a hole in the side for the lumpy top part of the switch
                     translate([0,-keyswitch_top_section/2,keyswitch_stem/2])
@@ -304,15 +370,7 @@ module thumbcap() {
     }
 }
 
-
-module keycap() difference() {
-    keycap_body();
-        // Knock out finger groove in top
-    translate([keycap_width*.2,0,finger_groove_rad*2+keycap_height-1]) rotate([180,0,90]) finger();
-}
-
-// A double keycap for the thumb buttons, working like a teeter-totter.
-// Slot sizes are uneven because thumb pressure and angle change with position.
+// A slot for the double keycap for the thumb buttons
 module doublekeyHole() {
         cube([doublekeyWidth+2.3,doublekeyLength+2.3,100],center=true);
  }
@@ -417,16 +475,17 @@ module hollow_top_shell() scale([left_hand,1,1]) translate([0,0,-base_ht])  diff
     }
     // Whack out the screw holes
     screw_holes();
-    //  Gap for cable support hole
+    //  Gap for cable support holes
     translate([overall_width+0.01,cableHoleShift,base_ht-0.01]) rotate([0,0,90]) strain_relief_hole();
+    translate([-0.01,cableHoleShift,base_ht-0.01]) rotate([0,0,-90]) strain_relief_hole();
 }
 // Socket for putting keyswitch and cap cover in.
 module switch_socket() {
     // A switch cavity
-    translate([0,0,-keycapInset-keyswitch_stem]) switch_cavity();
+    translate([0,0,-keycap_inset-keyswitch_stem]) switch_cavity();
 }
 
-pillarInset=keycapInset-1;    // Tweakable inset for thumb pillar
+pillarInset=keycap_inset-1;    // Tweakable inset for thumb pillar
 
 // A double socket for the thumb switches
 module doubleswitch_socket() {
@@ -453,10 +512,10 @@ module switch_pillar(ht) translate([0,0,-ht]) {
         translate([0,0,ht]) switch_socket();
          // Slots for "toes" of keycap
          translate([0,0,ht-keycapToeHeight])
-            cube([pillarWid+pillarWall*4,keycapToeWidth+keyswitch_clearance*3,keycapInset*2],center=true);
+            cube([pillarWid+pillarWall*4,keycapToeWidth+keyswitch_clearance*3,keycap_inset*2],center=true);
     }
     // DEBUG: The keycap for testing fit.
-    //%translate([0,0,ht-keycapInset]) color([1,0,0]) rotate([0,0,90]) keycap();
+    //%translate([0,0,ht-keycap_inset]) color([1,0,0]) rotate([0,0,90]) keycap();
 }
 
 // Amount to trim off top corners
@@ -476,16 +535,16 @@ module doubleswitch_pillar(ht) translate([0,0,-ht]) {
         // Switch cavity in the top
         translate([0,0,ht]) doubleswitch_socket();
          // Slots for "toes" of keycap
-         translate([keyswitch_rim_wid/2-(keycapToeWidth+keyswitch_clearance*3)/2,-(doublepillarLen+pillarWall*4)/2,ht-thumb_key_extension-keycapToeHeight-keycapInset])
-            cube([keycapToeWidth+keyswitch_clearance*3,doublepillarLen+pillarWall*4,keycapInset*4]);
-         translate([-keyswitch_rim_wid/2-(keycapToeWidth+keyswitch_clearance*3)/2,-(doublepillarLen+pillarWall*4)/2,ht-thumb_key_extension-keycapToeHeight-keycapInset])
-            cube([keycapToeWidth+keyswitch_clearance*3,doublepillarLen+pillarWall*4,keycapInset*4]);
+         translate([keyswitch_rim_wid/2-(keycapToeWidth+keyswitch_clearance*3)/2,-(doublepillarLen+pillarWall*4)/2,ht-thumb_key_extension-keycapToeHeight-keycap_inset])
+            cube([keycapToeWidth+keyswitch_clearance*3,doublepillarLen+pillarWall*4,keycap_inset*4]);
+         translate([-keyswitch_rim_wid/2-(keycapToeWidth+keyswitch_clearance*3)/2,-(doublepillarLen+pillarWall*4)/2,ht-thumb_key_extension-keycapToeHeight-keycap_inset])
+            cube([keycapToeWidth+keyswitch_clearance*3,doublepillarLen+pillarWall*4,keycap_inset*4]);
     }
     // DEBUG: The keycaps for testing fit.
     /*
-    translate([keyswitch_rim_wid/2,0,ht-keycapInset-thumb_key_extension+1]) color([1,0,0])
+    translate([keyswitch_rim_wid/2,0,ht-keycap_inset-thumb_key_extension+1]) color([1,0,0])
         %rotate([0,0,90]) thumbcap();
-    translate([-keyswitch_rim_wid/2,0,ht-keycapInset-thumb_key_extension+1]) color([1,0,0])
+    translate([-keyswitch_rim_wid/2,0,ht-keycap_inset-thumb_key_extension+1]) color([1,0,0])
         %rotate([0,0,-90]) thumbcap();*/
 }
 
@@ -517,6 +576,27 @@ module pillar_collection() {
     }
 }
 
+// Grippy block that supports the exiting cable
+module cable_support() {
+    difference() {
+            // Block to make cable support in.
+            translate([-shellThickness-6.1,cableHoleShift,4+base_ht])
+                cube([12,14,8],center=true);
+            // Tunnel and inside part of strain relief hole for cable
+            translate([0.01,cableHoleShift,base_ht+6])
+                cube([50,usb_cable_rad*2-0.4,12],center=true);
+            translate([0.01,cableHoleShift,base_ht]) rotate([0,0,90])  
+                strain_relief_hole();
+    }
+    // Ridges in USB slot
+    translate([-shellThickness-11,cableHoleShift-usb_cable_rad,base_ht],$fn=10)
+        cylinder(h=8,r1=0.8,r2=0.6);
+    translate([-shellThickness-9,cableHoleShift+usb_cable_rad,base_ht],$fn=10)
+        cylinder(h=8,r1=0.8,r2=0.6);
+    translate([-shellThickness-7,cableHoleShift-usb_cable_rad,base_ht],$fn=10)
+            cylinder(h=8,r1=0.8,r2=0.6);
+}
+
 module base() scale([left_hand,1,1]) intersection() {
     union() {
         difference() {
@@ -527,9 +607,6 @@ module base() scale([left_hand,1,1]) intersection() {
                     core_form();
                     translate([0,0,overall_length*2+base_ht]) cube(overall_length*4,center=true);
                 }
-                // Block to make cable support in.
-                translate([overall_width-shellThickness-6.1,cableHoleShift,4+base_ht])
-                    cube([12,14,8],center=true);
             }
             // Chop the excess off the bottom
             translate([0,0,-overall_length]) cube(overall_length*2,center=true);
@@ -544,22 +621,13 @@ module base() scale([left_hand,1,1]) intersection() {
             // is rotated through 180 degrees to point at the other side of the keyboard shell.
             translate([boardLen/2-boardResetHoleX,left_hand*(boardResetHoleY-boardWid/2),0])
                 translate(boardPlacement) cylinder(h=50,r=2.1,center=true,$fn=20);
-            // Tunnel and inside part of strain relief hole for cable
-            translate([overall_width+0.01,cableHoleShift,base_ht+6])
-                cube([50,usb_cable_rad*2-0.4,12],center=true);
-            translate([overall_width+0.01,cableHoleShift,base_ht]) rotate([0,0,90])  
-                strain_relief_hole();
         }
-        // Ridges in USB slot
-        translate([overall_width-shellThickness-11,cableHoleShift-usb_cable_rad,base_ht],$fn=10)
-            cylinder(h=8,r1=0.8,r2=0.6);
-        translate([overall_width-shellThickness-9,cableHoleShift+usb_cable_rad,base_ht],$fn=10)
-            cylinder(h=8,r1=0.8,r2=0.6);
-        translate([overall_width-shellThickness-7,cableHoleShift-usb_cable_rad,base_ht],$fn=10)
-            cylinder(h=8,r1=0.8,r2=0.6);
-
         // Prop the Pi up.
         translate(boardPlacement) boardPillars();
+        // Right side cable support
+        translate([overall_width,0,0]) cable_support();
+        // Leftt side cable support
+        translate([0,0,0]) scale([-1,1,1]) cable_support();
     }
     // Right, now create a shell * base inclusion to trim off any bits sticking out
     union() {
@@ -582,7 +650,7 @@ module key_soldering_jig() {
                     cube([pillarWid+jigSpacing*2+2,pillarLen,pillarWall],center=true);
                 }
                 // Lop off top
-                translate([0,0,50+3+keycapInset]) cube(100,center=true);
+                translate([0,0,50+3+keycap_inset]) cube(100,center=true);
                 // Hole for keyswitch head to poke through
                 cube([keyswitch_wid,keyswitch_len,15],center=true);
             }
@@ -596,7 +664,7 @@ module key_soldering_jig() {
 //keycap();
 //test_double_pillar();
 //translate([0,-25,0]) thumbcap();
-// translate([0,25,0]) thumbcap();
-base();
+//translate([0,25,0]) thumbcap();
+//base();
 //translate([0,0,base_ht]) 
-// hollow_top_shell();
+ hollow_top_shell();
