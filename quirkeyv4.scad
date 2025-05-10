@@ -448,6 +448,18 @@ module reduced_core_form(reduce) {
         core_form();
 }
 
+// Used to support the shell so that support and brim are not needed.
+module support_foot() {
+    // The prop
+    translate([0,overall_length*0.4,base_ht+overall_height])
+        cube([1.2,overall_length*0.63,overall_height*2],center=true);
+    // Wide pad on prop
+    hull() {
+        translate([0,overall_length*.7,base_ht]) cylinder(h=0.4,r=3,$fn=20);
+        translate([0,overall_length*0.1,base_ht]) cylinder(h=0.4,r=3,$fn=20);
+    }
+}
+
 // Hollow top shell minus the base.
 module hollow_top_shell() scale([left_hand,1,1]) translate([0,0,-base_ht])  difference() {
     union() {
@@ -466,10 +478,11 @@ module hollow_top_shell() scale([left_hand,1,1]) translate([0,0,-base_ht])  diff
             // Slightly drop the core form so that these supports barely skim the underside.
             translate([0,0,-0.2]) reduced_core_form(shellThickness);
             union() {
-                translate([(first_finger_loc[0]+second_finger_loc[0])/2,overall_length*0.4,base_ht+overall_height])
-                    cube([1.2,overall_length*0.63,overall_height*2],center=true);
-                translate([(ring_finger_loc[0]+pinkie_finger_loc[0])/2,overall_length*0.4,base_ht+overall_height])
-                    cube([1.2,overall_length*0.63,overall_height*2],center=true);
+                translate([(first_finger_loc[0]+second_finger_loc[0])/2,0,0])
+                    support_foot();
+
+                translate([(ring_finger_loc[0]+pinkie_finger_loc[0])/2,0,0])
+                    support_foot();
             }
         }
     }
